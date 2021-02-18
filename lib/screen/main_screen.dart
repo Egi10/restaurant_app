@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/response/restaurants_response.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/provider/model/restaurants_model.dart';
+import 'package:restaurant_app/provider/restaurants_provider.dart';
 import 'package:restaurant_app/screen/details_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,20 +35,43 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Padding(padding: EdgeInsets.only(top: 20)),
               Expanded(
-                child: FutureBuilder<String>(
-                    future: DefaultAssetBundle.of(context)
-                        .loadString("assets/data/local_restaurant.json"),
-                    builder: (context, snapshot) {
-                      final restaurantsResponse =
-                          parseRestaurant(snapshot.data);
-                      return ListView.builder(
-                          itemCount:
-                              restaurantsResponse.restaurants.length ?? 0,
-                          itemBuilder: (context, index) {
-                            return _buildRestaurantsItems(context,
-                                restaurantsResponse.restaurants[index]);
-                          });
-                    }),
+                child: ChangeNotifierProvider<RestaurantsProvider>(
+                  create: (_) => RestaurantsProvider(apiService: ApiService()),
+                  child: Consumer<RestaurantsProvider>(
+                    builder: (context, state, _) {
+                      if (state.state == ResultState.Loading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state.state == ResultState.HasData) {
+                        return ListView.builder(
+                            itemCount: state.result.length,
+                            itemBuilder: (context, index) {
+                              return _buildRestaurantsItems(
+                                  context, state.result[index]);
+                            });
+                      } else if (state.state == ResultState.NoData) {
+                        return Center(child: Text(state.message));
+                      } else if (state.state == ResultState.Error) {
+                        return Center(child: Text(state.message));
+                      } else {
+                        return Center(child: Text(''));
+                      }
+                    },
+                  ),
+                ),
+                // child: FutureBuilder<String>(
+                //     future: DefaultAssetBundle.of(context)
+                //         .loadString("assets/data/local_restaurant.json"),
+                //     builder: (context, snapshot) {
+                //       final restaurantsResponse =
+                //           parseRestaurant(snapshot.data);
+                //       return ListView.builder(
+                //           itemCount:
+                //               restaurantsResponse.restaurants.length ?? 0,
+                //           itemBuilder: (context, index) {
+                //             return _buildRestaurantsItems(context,
+                //                 restaurantsResponse.restaurants[index]);
+                //           });
+                //     }),
               )
             ],
           ),
@@ -55,7 +81,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-Widget _buildRestaurantsItems(BuildContext context, Restaurants restaurants) {
+Widget _buildRestaurantsItems(
+    BuildContext context, RestaurantsModel restaurants) {
   return Container(
     height: 60,
     margin: EdgeInsets.all(8),
@@ -65,8 +92,8 @@ Widget _buildRestaurantsItems(BuildContext context, Restaurants restaurants) {
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return DetailScreen(
-                restaurants: restaurants,
-              );
+                  // restaurants: restaurants,
+                  );
             }));
           },
           child: Row(
@@ -75,8 +102,28 @@ Widget _buildRestaurantsItems(BuildContext context, Restaurants restaurants) {
                 tag: restaurants.pictureId,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(restaurants.pictureId,
-                      width: 80, height: 60, fit: BoxFit.fill),
+                  child: Image.network(
+                      "https://restaurant-api.dicoding.dev/images/medium/${restaurants.pictureId}",
+                      errorBuilder: (BuildContext context, Object exception,
+                          StackTrace stackTrace) {
+                    return Image(image: AssetImage('assets/image/empty.jpg'));
+                  }, loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: Container(
+                        width: 80,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.5,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes
+                              : null,
+                        ),
+                      )
+                    );
+                  }, width: 80, height: 60, fit: BoxFit.fill),
                 ),
               ),
               Padding(padding: EdgeInsets.only(left: 10)),
