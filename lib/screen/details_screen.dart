@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/response/restaurants_response.dart';
+import 'package:restaurant_app/provider/model/restaurants_model.dart';
 
 class DetailScreen extends StatelessWidget {
-  final Restaurants restaurants;
+  final RestaurantsModel restaurants;
 
   DetailScreen({@required this.restaurants});
 
@@ -20,7 +20,27 @@ class DetailScreen extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(10.0),
                     bottomRight: Radius.circular(10.0)),
-                child: Image.network(restaurants.pictureId,
+                child: Image.network(
+                    "https://restaurant-api.dicoding.dev/images/medium/${restaurants.pictureId}",
+                    errorBuilder: (BuildContext context, Object exception,
+                        StackTrace stackTrace) {
+                  return Image(image: AssetImage('assets/image/empty.jpg'));
+                }, loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                      child: Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.width * 1.2,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.5,
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes
+                          : null,
+                    ),
+                  ));
+                },
                     width: double.infinity,
                     height: MediaQuery.of(context).size.width * 1.2,
                     fit: BoxFit.fill),

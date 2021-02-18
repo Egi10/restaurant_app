@@ -58,20 +58,6 @@ class _MainScreenState extends State<MainScreen> {
                     },
                   ),
                 ),
-                // child: FutureBuilder<String>(
-                //     future: DefaultAssetBundle.of(context)
-                //         .loadString("assets/data/local_restaurant.json"),
-                //     builder: (context, snapshot) {
-                //       final restaurantsResponse =
-                //           parseRestaurant(snapshot.data);
-                //       return ListView.builder(
-                //           itemCount:
-                //               restaurantsResponse.restaurants.length ?? 0,
-                //           itemBuilder: (context, index) {
-                //             return _buildRestaurantsItems(context,
-                //                 restaurantsResponse.restaurants[index]);
-                //           });
-                //     }),
               )
             ],
           ),
@@ -92,7 +78,7 @@ Widget _buildRestaurantsItems(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return DetailScreen(
-                  // restaurants: restaurants,
+                  restaurants: restaurants,
                   );
             }));
           },
@@ -111,18 +97,17 @@ Widget _buildRestaurantsItems(
                           ImageChunkEvent loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Center(
-                      child: Container(
-                        width: 80,
-                        height: 60,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1.5,
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes
-                              : null,
-                        ),
-                      )
-                    );
+                        child: Container(
+                      width: 80,
+                      height: 60,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.5,
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes
+                            : null,
+                      ),
+                    ));
                   }, width: 80, height: 60, fit: BoxFit.fill),
                 ),
               ),
