@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
 import 'package:restaurant_app/provider/model/restaurants_model.dart';
+import 'package:restaurant_app/provider/restaurants_provider.dart';
 
 class DetailScreen extends StatelessWidget {
   final RestaurantsModel restaurants;
@@ -11,94 +15,167 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+          child: ChangeNotifierProvider<RestaurantsProvider>(
+            create: (_) =>
+                RestaurantsProvider.details(
+                    apiService: ApiService(), idRestaurants: restaurants.id),
+            child: Consumer<RestaurantsProvider>(builder: (context, state, _) {
+              if (state.state == ResultState.Loading) {
+                return SizedBox(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 1.3,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              } else if (state.state == ResultState.HasData) {
+                return _buildRestaurantsDetail(context, state.resultDetail);
+              } else if (state.state == ResultState.NoData) {
+                return Center(child: Text(state.message));
+              } else if (state.state == ResultState.Error) {
+                return Center(child: Text(state.message));
+              } else {
+                return Center(child: Text(''));
+              }
+            }),
+          )),
+    );
+  }
+}
+
+Widget _buildRestaurantsDetail(BuildContext context,
+    DetailsRestaurantsModel detailsRestaurantsModel) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Hero(
+        tag: detailsRestaurantsModel.pictureId,
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0)),
+          child: Image.network(
+              "https://restaurant-api.dicoding.dev/images/medium/${detailsRestaurantsModel
+                  .pictureId}",
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace stackTrace) {
+                return Image(image: AssetImage('assets/image/empty.jpg'));
+              },
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                    child: Container(
+                        width: double.infinity,
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 1.2,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator())));
+              },
+              width: double.infinity,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 1.2,
+              fit: BoxFit.fill),
+        ),
+      ),
+      Padding(
+        padding:
+        EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0, bottom: 15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Hero(
-              tag: restaurants.pictureId,
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0)),
-                child: Image.network(
-                    "https://restaurant-api.dicoding.dev/images/medium/${restaurants.pictureId}",
-                    errorBuilder: (BuildContext context, Object exception,
-                        StackTrace stackTrace) {
-                  return Image(image: AssetImage('assets/image/empty.jpg'));
-                }, loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                      child: Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.width * 1.2,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 1.5,
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes
-                          : null,
-                    ),
-                  ));
-                },
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.width * 1.2,
-                    fit: BoxFit.fill),
-              ),
+            Text(
+              detailsRestaurantsModel.name,
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: 20.0, left: 15.0, right: 15.0, bottom: 15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    restaurants.name,
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
+            Padding(padding: EdgeInsets.only(top: 3)),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.location_on,
+                  size: 16.0,
+                  color: Colors.grey,
+                ),
+                Padding(padding: EdgeInsets.only(left: 3.0)),
+                Text(
+                  detailsRestaurantsModel.city,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
                   ),
-                  Padding(padding: EdgeInsets.only(top: 3)),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.location_on,
-                        size: 16.0,
-                        color: Colors.grey,
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 3.0)),
-                      Text(
-                        restaurants.city,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
+                )
+              ],
+            ),
+            Padding(padding: EdgeInsets.only(top: 20.0)),
+            Text(
+              "Description",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
+            ),
+            Padding(padding: EdgeInsets.only(top: 10)),
+            Text(
+              detailsRestaurantsModel.description,
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.normal),
+            ),
+            Padding(padding: EdgeInsets.only(top: 20)),
+            Text(
+              "Customer Reviews",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
+            ),
+            Padding(padding: EdgeInsets.only(top: 10)),
+            ListView.builder(
+              padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: detailsRestaurantsModel.customerReviews.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          detailsRestaurantsModel.customerReviews[index].name,
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
-                      )
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 20.0)),
-                  Text(
-                    "Description",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 10)),
-                  Text(
-                    restaurants.description,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.normal),
-                  ),
-                ],
-              ),
-            )
+                        Text(
+                          detailsRestaurantsModel.customerReviews[index].date,
+                          style: TextStyle(
+                              fontSize: 10),
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 5)),
+                        Text(
+                          detailsRestaurantsModel.customerReviews[index].review,
+                          style: TextStyle(
+                              fontSize: 12),
+                        ),
+                        Divider()
+                      ],
+                    ),
+                  );
+                })
           ],
         ),
-      ),
-    );
-  }
+      )
+    ],
+  );
 }

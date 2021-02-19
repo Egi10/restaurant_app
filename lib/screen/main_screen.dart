@@ -100,13 +100,10 @@ Widget _buildRestaurantsItems(
                         child: Container(
                       width: 80,
                       height: 60,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1.5,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes
-                            : null,
-                      ),
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator()
+                      )
                     ));
                   }, width: 80, height: 60, fit: BoxFit.fill),
                 ),
