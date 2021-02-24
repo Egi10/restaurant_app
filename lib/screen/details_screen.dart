@@ -149,7 +149,7 @@ Widget _buildRestaurantsDetail(
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text(
                           detailsRestaurantsModel.customerReviews[index].review,
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         Divider()
                       ],

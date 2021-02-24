@@ -10,6 +10,7 @@ enum ResultState { Loading, NoData, HasData, Error, NoInternet }
 class RestaurantsProvider extends ChangeNotifier {
   ApiService apiService;
   String idRestaurants;
+  String querySearch;
 
   RestaurantsProvider({ApiService apiService}) {
     this.apiService = apiService;
@@ -20,6 +21,12 @@ class RestaurantsProvider extends ChangeNotifier {
     this.apiService = apiService;
     this.idRestaurants = idRestaurants;
     _fetchDetailsRestaurant();
+  }
+
+  RestaurantsProvider.search({ApiService apiService, String querySearch}) {
+    this.apiService = apiService;
+    this.querySearch = querySearch;
+    _fetchSearchRestaurant();
   }
 
   ResultState _state;
@@ -100,6 +107,42 @@ class RestaurantsProvider extends ChangeNotifier {
           rating: detailsRestaurant.restaurant.rating,
           customerReviews: listCustomerReview);
       return _resultDetails = detailResult;
+    } on SocketException {
+      _state = ResultState.NoInternet;
+      notifyListeners();
+      return _message = 'Check Your Internet Network';
+    } catch (e) {
+      _state = ResultState.Error;
+      notifyListeners();
+      return _message = '$e';
+    }
+  }
+
+  Future<dynamic> _fetchSearchRestaurant() async {
+    try {
+      _state = ResultState.Loading;
+      notifyListeners();
+
+      final listRestaurants = await apiService.searchRestaurants(querySearch);
+      if (listRestaurants.restaurants.isEmpty) {
+        _state = ResultState.NoData;
+        notifyListeners();
+        return _message = 'Empty Daya';
+      } else {
+        _state = ResultState.HasData;
+        notifyListeners();
+        List<RestaurantsModel> newList = [];
+        for (var i = 0; i < listRestaurants.restaurants.length; i++) {
+          newList.add(RestaurantsModel(
+              id: listRestaurants.restaurants[i].id,
+              name: listRestaurants.restaurants[i].name,
+              description: listRestaurants.restaurants[i].description,
+              pictureId: listRestaurants.restaurants[i].pictureId,
+              city: listRestaurants.restaurants[i].city,
+              rating: listRestaurants.restaurants[i].rating));
+        }
+        return _result = newList;
+      }
     } on SocketException {
       _state = ResultState.NoInternet;
       notifyListeners();

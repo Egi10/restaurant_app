@@ -25,4 +25,14 @@ class ApiService {
       throw 'Failed Load Data';
     }
   }
+
+  Future<RestaurantsResponse> searchRestaurants(String query) async {
+    final response = await http.get(_baseUrl + "/search?q=$query");
+
+    if (response.statusCode == 200) {
+      return RestaurantsResponse.fromJson(json.decode(response.body));
+    } else {
+      throw 'Failed Load Data';
+    }
+  }
 }
