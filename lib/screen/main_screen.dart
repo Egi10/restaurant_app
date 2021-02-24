@@ -4,6 +4,7 @@ import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/model/restaurants_model.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
 import 'package:restaurant_app/screen/details_screen.dart';
+import 'package:restaurant_app/screen/search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -16,10 +17,24 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          margin: EdgeInsets.only(top: 35, left: 15, right: 15),
+          margin: EdgeInsets.only(top: 10, left: 15, right: 15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.search_rounded),
+                      color: Colors.grey,
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SearchScreen();
+                        }));
+                      }),
+                ],
+              ),
               Text(
                 'Restaurant',
                 style: TextStyle(fontSize: 24),
@@ -78,8 +93,8 @@ Widget _buildRestaurantsItems(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return DetailScreen(
-                  restaurants: restaurants,
-                  );
+                idRestaurants: restaurants.id,
+              );
             }));
           },
           child: Row(
@@ -98,13 +113,11 @@ Widget _buildRestaurantsItems(
                     if (loadingProgress == null) return child;
                     return Center(
                         child: Container(
-                      width: 80,
-                      height: 60,
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator()
-                      )
-                    ));
+                            width: 80,
+                            height: 60,
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator())));
                   }, width: 80, height: 60, fit: BoxFit.fill),
                 ),
               ),

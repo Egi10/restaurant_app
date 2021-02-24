@@ -12,7 +12,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return RestaurantsResponse.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed Load Data');
+      throw 'Failed Load Data';
     }
   }
 
@@ -22,7 +22,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return DetailsRestaurantsResponse.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed Load Data');
+      throw 'Failed Load Data';
     }
   }
 }

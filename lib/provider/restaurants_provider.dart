@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
 import 'package:restaurant_app/provider/model/restaurants_model.dart';
 
-enum ResultState { Loading, NoData, HasData, Error }
+enum ResultState { Loading, NoData, HasData, Error, NoInternet }
 
 class RestaurantsProvider extends ChangeNotifier {
   ApiService apiService;
@@ -58,10 +60,14 @@ class RestaurantsProvider extends ChangeNotifier {
         }
         return _result = newList;
       }
+    } on SocketException {
+      _state = ResultState.NoInternet;
+      notifyListeners();
+      return _message = 'Check Your Internet Network';
     } catch (e) {
       _state = ResultState.Error;
       notifyListeners();
-      return _message = 'Error $e';
+      return _message = '$e';
     }
   }
 
@@ -94,10 +100,14 @@ class RestaurantsProvider extends ChangeNotifier {
           rating: detailsRestaurant.restaurant.rating,
           customerReviews: listCustomerReview);
       return _resultDetails = detailResult;
+    } on SocketException {
+      _state = ResultState.NoInternet;
+      notifyListeners();
+      return _message = 'Check Your Internet Network';
     } catch (e) {
       _state = ResultState.Error;
       notifyListeners();
-      return _message = 'Error $e';
+      return _message = '$e';
     }
   }
 }

@@ -3,51 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
-import 'package:restaurant_app/provider/model/restaurants_model.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
 
 class DetailScreen extends StatelessWidget {
-  final RestaurantsModel restaurants;
+  final String idRestaurants;
 
-  DetailScreen({@required this.restaurants});
+  DetailScreen({@required this.idRestaurants});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Container(
           child: ChangeNotifierProvider<RestaurantsProvider>(
-            create: (_) =>
-                RestaurantsProvider.details(
-                    apiService: ApiService(), idRestaurants: restaurants.id),
-            child: Consumer<RestaurantsProvider>(builder: (context, state, _) {
-              if (state.state == ResultState.Loading) {
-                return SizedBox(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height / 1.3,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              } else if (state.state == ResultState.HasData) {
-                return _buildRestaurantsDetail(context, state.resultDetail);
-              } else if (state.state == ResultState.NoData) {
-                return Center(child: Text(state.message));
-              } else if (state.state == ResultState.Error) {
-                return Center(child: Text(state.message));
-              } else {
-                return Center(child: Text(''));
-              }
-            }),
-          )),
+        create: (_) => RestaurantsProvider.details(
+            apiService: ApiService(), idRestaurants: idRestaurants),
+        child: Consumer<RestaurantsProvider>(builder: (context, state, _) {
+          if (state.state == ResultState.Loading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state.state == ResultState.HasData) {
+            return _buildRestaurantsDetail(context, state.resultDetail);
+          } else if (state.state == ResultState.NoData) {
+            return Center(child: Text(state.message));
+          } else if (state.state == ResultState.Error) {
+            return Center(child: Text(state.message));
+          } else {
+            return Center(child: Text('Tes ${state.message}'));
+          }
+        }),
+      )),
     );
   }
 }
 
-Widget _buildRestaurantsDetail(BuildContext context,
-    DetailsRestaurantsModel detailsRestaurantsModel) {
-  return Column(
+Widget _buildRestaurantsDetail(
+    BuildContext context, DetailsRestaurantsModel detailsRestaurantsModel) {
+  return SingleChildScrollView(
+      child: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Hero(
@@ -57,37 +50,29 @@ Widget _buildRestaurantsDetail(BuildContext context,
               bottomLeft: Radius.circular(10.0),
               bottomRight: Radius.circular(10.0)),
           child: Image.network(
-              "https://restaurant-api.dicoding.dev/images/medium/${detailsRestaurantsModel
-                  .pictureId}",
+              "https://restaurant-api.dicoding.dev/images/medium/${detailsRestaurantsModel.pictureId}",
               errorBuilder: (BuildContext context, Object exception,
                   StackTrace stackTrace) {
-                return Image(image: AssetImage('assets/image/empty.jpg'));
-              },
-              loadingBuilder: (BuildContext context, Widget child,
+            return Image(image: AssetImage('assets/image/empty.jpg'));
+          }, loadingBuilder: (BuildContext context, Widget child,
                   ImageChunkEvent loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                    child: Container(
-                        width: double.infinity,
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 1.2,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator())));
-              },
+            if (loadingProgress == null) return child;
+            return Center(
+                child: Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.width * 1.2,
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator())));
+          },
               width: double.infinity,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .width * 1.2,
+              height: MediaQuery.of(context).size.width * 1.2,
               fit: BoxFit.fill),
         ),
       ),
       Padding(
         padding:
-        EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0, bottom: 15.0),
+            EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0, bottom: 15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -142,7 +127,7 @@ Widget _buildRestaurantsDetail(BuildContext context,
             ),
             Padding(padding: EdgeInsets.only(top: 10)),
             ListView.builder(
-              padding: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 itemCount: detailsRestaurantsModel.customerReviews.length,
                 itemBuilder: (context, index) {
@@ -159,14 +144,12 @@ Widget _buildRestaurantsDetail(BuildContext context,
                         ),
                         Text(
                           detailsRestaurantsModel.customerReviews[index].date,
-                          style: TextStyle(
-                              fontSize: 10),
+                          style: TextStyle(fontSize: 10),
                         ),
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text(
                           detailsRestaurantsModel.customerReviews[index].review,
-                          style: TextStyle(
-                              fontSize: 12),
+                          style: TextStyle(fontSize: 12),
                         ),
                         Divider()
                       ],
@@ -177,5 +160,5 @@ Widget _buildRestaurantsDetail(BuildContext context,
         ),
       )
     ],
-  );
+  ));
 }
