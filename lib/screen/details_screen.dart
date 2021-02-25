@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
+import 'package:restaurant_app/widget/message_error.dart';
 
 class DetailScreen extends StatelessWidget {
   final String idRestaurants;
@@ -25,11 +26,22 @@ class DetailScreen extends StatelessWidget {
           } else if (state.state == ResultState.HasData) {
             return _buildRestaurantsDetail(context, state.resultDetail);
           } else if (state.state == ResultState.NoData) {
-            return Center(child: Text(state.message));
+            return MessageError(
+                image: "assets/image/bg_empty.svg",
+                message: state.message,
+                subMessage:
+                    "We Cannot find the item you are searching for. maybe a little spelling mistake?");
           } else if (state.state == ResultState.Error) {
-            return Center(child: Text(state.message));
+            return MessageError(
+                image: "assets/image/bg_server_down.svg",
+                message: state.message,
+                subMessage: "Our server goes down. We will be back soon.");
           } else {
-            return Center(child: Text('Tes ${state.message}'));
+            return MessageError(
+                image: "assets/image/bg_connection.svg",
+                message: state.message,
+                subMessage:
+                    "Slow or internet no connection. Please check your internet settings");
           }
         }),
       )),

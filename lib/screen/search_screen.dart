@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
 import 'package:restaurant_app/widget/item_list_restaurants.dart';
+import 'package:restaurant_app/widget/message_error.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -80,11 +81,28 @@ Widget _searchRestaurant() {
               return buildRestaurantsItems(context, state.result[index]);
             });
       } else if (state.state == ResultState.NoData) {
-        return Center(child: Text(state.message));
+        return MessageError(
+            image: "assets/image/bg_empty.svg",
+            message: state.message,
+            subMessage:
+                "We Cannot find the item you are searching for. maybe a little spelling mistake?");
       } else if (state.state == ResultState.Error) {
-        return Center(child: Text(state.message));
+        return MessageError(
+            image: "assets/image/bg_server_down.svg",
+            message: state.message,
+            subMessage: "Our server goes down. We will be back soon.");
       } else {
-        return Center(child: Text(''));
+        String message;
+        if (state.message != null) {
+          message = state.message;
+        } else {
+          message = "Ops";
+        }
+        return MessageError(
+            image: "assets/image/bg_connection.svg",
+            message: message,
+            subMessage:
+                "Slow or internet no connection. Please check your internet settings");
       }
     },
   ));
