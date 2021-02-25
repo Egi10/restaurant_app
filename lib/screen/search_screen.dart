@@ -92,17 +92,18 @@ Widget _searchRestaurant() {
             message: state.message,
             subMessage: "Our server goes down. We will be back soon.");
       } else {
-        String message;
         if (state.message != null) {
-          message = state.message;
+          return MessageError(
+              image: "assets/image/bg_connection.svg",
+              message: state.message,
+              subMessage:
+                  "Slow or internet no connection. Please check your internet settings");
         } else {
-          message = "Ops";
+          return MessageError(
+              image: "assets/image/search_now.svg",
+              message: "Search Now",
+              subMessage: "Let's start looking for your favorite restaurant");
         }
-        return MessageError(
-            image: "assets/image/bg_connection.svg",
-            message: message,
-            subMessage:
-                "Slow or internet no connection. Please check your internet settings");
       }
     },
   ));
