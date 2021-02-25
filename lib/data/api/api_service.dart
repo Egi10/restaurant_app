@@ -32,7 +32,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return RestaurantsResponse.fromJson(json.decode(response.body));
     } else {
-      throw 'Failed Load Data';
+      throw 'Failed Load Data ${response.statusCode}';
     }
   }
 }

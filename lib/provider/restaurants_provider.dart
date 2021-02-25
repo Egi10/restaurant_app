@@ -10,9 +10,10 @@ enum ResultState { Loading, NoData, HasData, Error, NoInternet }
 class RestaurantsProvider extends ChangeNotifier {
   ApiService apiService;
   String idRestaurants;
-  String querySearch;
 
-  RestaurantsProvider({ApiService apiService}) {
+  RestaurantsProvider();
+
+  RestaurantsProvider.allList({ApiService apiService}) {
     this.apiService = apiService;
     _fetchAllListRestaurant();
   }
@@ -21,12 +22,6 @@ class RestaurantsProvider extends ChangeNotifier {
     this.apiService = apiService;
     this.idRestaurants = idRestaurants;
     _fetchDetailsRestaurant();
-  }
-
-  RestaurantsProvider.search({ApiService apiService, String querySearch}) {
-    this.apiService = apiService;
-    this.querySearch = querySearch;
-    _fetchSearchRestaurant();
   }
 
   ResultState _state;
@@ -118,16 +113,18 @@ class RestaurantsProvider extends ChangeNotifier {
     }
   }
 
-  Future<dynamic> _fetchSearchRestaurant() async {
+  Future<dynamic> fetchSearchRestaurant(String querySearch) async {
     try {
       _state = ResultState.Loading;
       notifyListeners();
+
+      ApiService apiService = ApiService();
 
       final listRestaurants = await apiService.searchRestaurants(querySearch);
       if (listRestaurants.restaurants.isEmpty) {
         _state = ResultState.NoData;
         notifyListeners();
-        return _message = 'Empty Daya';
+        return _message = 'Empty Data';
       } else {
         _state = ResultState.HasData;
         notifyListeners();
