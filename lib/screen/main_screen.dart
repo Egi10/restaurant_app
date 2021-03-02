@@ -6,12 +6,7 @@ import 'package:restaurant_app/screen/search_screen.dart';
 import 'package:restaurant_app/widget/item_list_restaurants.dart';
 import 'package:restaurant_app/widget/message_error.dart';
 
-class MainScreen extends StatefulWidget {
-  @override
-  _MainScreenState createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
+class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +23,15 @@ class _MainScreenState extends State<MainScreen> {
                       icon: Icon(Icons.search_rounded),
                       color: Colors.grey,
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return ChangeNotifierProvider<RestaurantsProvider>(
-                            create: (_) => RestaurantsProvider(),
-                            child: SearchScreen(),
-                          );
-                        }));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return ChangeNotifierProvider<RestaurantsProvider>(
+                              create: (_) => RestaurantsProvider(),
+                              child: SearchScreen(),
+                            );
+                          }),
+                        );
                       }),
                 ],
               ),
