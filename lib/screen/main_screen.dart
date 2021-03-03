@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/data/local/db_provider.dart';
+import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
+import 'package:restaurant_app/screen/favorite_screen.dart';
 import 'package:restaurant_app/screen/search_screen.dart';
 import 'package:restaurant_app/widget/item_list_restaurants.dart';
 import 'package:restaurant_app/widget/message_error.dart';
@@ -10,6 +12,22 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return ChangeNotifierProvider<DbProvider>(
+                create: (_) => DbProvider(),
+                child: FavoriteScreen(),
+              );
+            }),
+          );
+        },
+        label: Text('Favorite'),
+        icon: Icon(Icons.favorite),
+        backgroundColor: Colors.pink,
+      ),
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(top: 10, left: 15, right: 15),
@@ -64,23 +82,24 @@ class MainScreen extends StatelessWidget {
                               return buildRestaurantsItems(
                                   context, state.result[index]);
                             });
-                      }  else if (state.state == ResultState.NoData) {
+                      } else if (state.state == ResultState.NoData) {
                         return MessageError(
                             image: "assets/image/bg_empty.svg",
                             message: state.message,
                             subMessage:
-                            "We Cannot find the item you are searching for. maybe a little spelling mistake?");
+                                "We Cannot find the item you are searching for. maybe a little spelling mistake?");
                       } else if (state.state == ResultState.Error) {
                         return MessageError(
                             image: "assets/image/bg_server_down.svg",
                             message: state.message,
-                            subMessage: "Our server goes down. We will be back soon.");
+                            subMessage:
+                                "Our server goes down. We will be back soon.");
                       } else {
                         return MessageError(
                             image: "assets/image/bg_connection.svg",
                             message: state.message,
                             subMessage:
-                            "Slow or internet no connection. Please check your internet settings");
+                                "Slow or internet no connection. Please check your internet settings");
                       }
                     },
                   ),

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/data/local/db_provider.dart';
+import 'package:restaurant_app/data/local/restaurants_entity.dart';
+import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
 import 'package:restaurant_app/widget/message_error.dart';
@@ -55,37 +57,79 @@ Widget _buildRestaurantsDetail(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Hero(
-          tag: detailsRestaurantsModel.pictureId,
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0)),
-            child: Image.network(
-              "https://restaurant-api.dicoding.dev/images/medium/${detailsRestaurantsModel.pictureId}",
-              errorBuilder: (BuildContext context, Object exception,
-                  StackTrace stackTrace) {
-                return Image(image: AssetImage('assets/image/empty.jpg'));
-              },
-              loadingBuilder: (BuildContext context, Widget child,
-                  ImageChunkEvent loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: Container(
+        Stack(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.width * 1.3,
+              child: Hero(
+                tag: detailsRestaurantsModel.pictureId,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0)),
+                  child: Image.network(
+                    "https://restaurant-api.dicoding.dev/images/medium/${detailsRestaurantsModel.pictureId}",
+                    errorBuilder: (BuildContext context, Object exception,
+                        StackTrace stackTrace) {
+                      return Image(image: AssetImage('assets/image/empty.jpg'));
+                    },
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.width * 1.2,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      );
+                    },
                     width: double.infinity,
                     height: MediaQuery.of(context).size.width * 1.2,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(),
-                    ),
+                    fit: BoxFit.cover,
                   ),
-                );
-              },
-              width: double.infinity,
-              height: MediaQuery.of(context).size.width * 1.2,
-              fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              top: 100,
+              right: 100,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 2, color: Colors.grey, spreadRadius: 2)
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: 25,
+                  backgroundColor: Colors.white,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.favorite_border,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () async {
+                      final restaurantsEntity = RestaurantsEntity(
+                          detailsRestaurantsModel.id,
+                          detailsRestaurantsModel.name,
+                          detailsRestaurantsModel.description,
+                          detailsRestaurantsModel.pictureId,
+                          detailsRestaurantsModel.city);
+
+                      Provider.of<DbProvider>(context, listen: false)
+                          .addRestaurant(restaurantsEntity);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         Padding(
           padding:

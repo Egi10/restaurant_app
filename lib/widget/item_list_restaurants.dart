@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_app/data/local/db_provider.dart';
 import 'package:restaurant_app/provider/model/restaurants_model.dart';
 import 'package:restaurant_app/screen/details_screen.dart';
 
@@ -11,11 +13,23 @@ Widget buildRestaurantsItems(
       children: <Widget>[
         InkWell(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return DetailScreen(
-                idRestaurants: restaurants.id,
-              );
-            }));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return ChangeNotifierProvider<DbProvider>(
+                  create: (_) => DbProvider(),
+                  child: DetailScreen(
+                    idRestaurants: restaurants.id,
+                  ),
+                );
+              }),
+            );
+
+            // Navigator.push(context, MaterialPageRoute(builder: (context) {
+            //   return DetailScreen(
+            //     idRestaurants: restaurants.id,
+            //   );
+            // }));
           },
           child: Row(
             children: <Widget>[

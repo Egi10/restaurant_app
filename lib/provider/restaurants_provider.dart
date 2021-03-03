@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
 import 'package:restaurant_app/provider/model/restaurants_model.dart';
 
