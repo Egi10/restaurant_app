@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_app/data/local/database_helper.dart';
 import 'package:restaurant_app/data/local/restaurants_entity.dart';
 
+enum ResultStateFavorite { NoData, HasData }
+
 class DbProvider extends ChangeNotifier {
+  ResultStateFavorite _resultState;
   List<RestaurantsEntity> _listRestaurant = [];
   DatabaseHelper _helper;
 
   List<RestaurantsEntity> get listRestaurant => _listRestaurant;
+
+  ResultStateFavorite get resultState => _resultState;
 
   DbProvider() {
     _helper = DatabaseHelper();
@@ -15,7 +20,13 @@ class DbProvider extends ChangeNotifier {
 
   void _getAllRestaurant() async {
     _listRestaurant = await _helper.getRestaurant();
-    notifyListeners();
+    if (_listRestaurant.isEmpty) {
+      _resultState = ResultStateFavorite.NoData;
+      notifyListeners();
+    } else {
+      _resultState = ResultStateFavorite.HasData;
+      notifyListeners();
+    }
   }
 
   Future<void> addRestaurant(RestaurantsEntity restaurantsEntity) async {

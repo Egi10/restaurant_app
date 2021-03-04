@@ -59,7 +59,7 @@ class MainScreen extends StatelessWidget {
                 textAlign: TextAlign.start,
               ),
               Text(
-                'Recomendation restauran for you!',
+                'Recommendation restaurant for you!',
                 style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,

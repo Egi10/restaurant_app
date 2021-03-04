@@ -24,12 +24,6 @@ Widget buildRestaurantsItems(
                 );
               }),
             );
-
-            // Navigator.push(context, MaterialPageRoute(builder: (context) {
-            //   return DetailScreen(
-            //     idRestaurants: restaurants.id,
-            //   );
-            // }));
           },
           child: Row(
             children: <Widget>[
