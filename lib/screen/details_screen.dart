@@ -7,6 +7,7 @@ import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
 import 'package:restaurant_app/widget/message_error.dart';
+import 'package:toast/toast.dart';
 
 class DetailScreen extends StatelessWidget {
   final String idRestaurants;
@@ -53,6 +54,9 @@ class DetailScreen extends StatelessWidget {
 
 Widget _buildRestaurantsDetail(
     BuildContext context, DetailsRestaurantsModel detailsRestaurantsModel) {
+  final provider = Provider.of<DbProvider>(context, listen: false);
+  provider.getRestaurantByIdSize(detailsRestaurantsModel.id);
+
   return SingleChildScrollView(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,15 +119,34 @@ Widget _buildRestaurantsDetail(
                       color: Colors.grey,
                     ),
                     onPressed: () async {
-                      final restaurantsEntity = RestaurantsEntity(
-                          detailsRestaurantsModel.id,
-                          detailsRestaurantsModel.name,
-                          detailsRestaurantsModel.description,
-                          detailsRestaurantsModel.pictureId,
-                          detailsRestaurantsModel.city);
+                      final list = provider.listRestaurantFavorite;
+                      if (list.length > 0) {
+                        provider
+                            .deleteRestaurantById(detailsRestaurantsModel.id);
+                        Toast.show(
+                            "Your Favorite Restaurant Data Has Been Deleted Successfully",
+                            context,
+                            duration: Toast.LENGTH_SHORT,
+                            gravity: Toast.BOTTOM);
+                        provider
+                            .getRestaurantByIdSize(detailsRestaurantsModel.id);
+                      } else {
+                        final restaurantsEntity = RestaurantsEntity(
+                            detailsRestaurantsModel.id,
+                            detailsRestaurantsModel.name,
+                            detailsRestaurantsModel.description,
+                            detailsRestaurantsModel.pictureId,
+                            detailsRestaurantsModel.city);
 
-                      Provider.of<DbProvider>(context, listen: false)
-                          .addRestaurant(restaurantsEntity);
+                        provider.addRestaurant(restaurantsEntity);
+                        Toast.show(
+                            "Your Favorite Restaurant Data Successfully Saved",
+                            context,
+                            duration: Toast.LENGTH_SHORT,
+                            gravity: Toast.BOTTOM);
+                        provider
+                            .getRestaurantByIdSize(detailsRestaurantsModel.id);
+                      }
                     },
                   ),
                 ),

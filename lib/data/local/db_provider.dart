@@ -7,9 +7,11 @@ enum ResultStateFavorite { NoData, HasData }
 class DbProvider extends ChangeNotifier {
   ResultStateFavorite _resultState;
   List<RestaurantsEntity> _listRestaurant = [];
+  List<RestaurantsEntity> _listRestaurantFavorite = [];
   DatabaseHelper _helper;
 
   List<RestaurantsEntity> get listRestaurant => _listRestaurant;
+  List<RestaurantsEntity> get listRestaurantFavorite => _listRestaurantFavorite;
 
   ResultStateFavorite get resultState => _resultState;
 
@@ -33,11 +35,16 @@ class DbProvider extends ChangeNotifier {
     await _helper.insertRestaurant(restaurantsEntity);
   }
 
-  Future<RestaurantsEntity> getRestauranById(String id) async {
+  Future<RestaurantsEntity> getRestaurantById(String id) async {
     return await _helper.getRestaurantById(id);
   }
 
+  void getRestaurantByIdSize(String id) async {
+    _listRestaurantFavorite = await _helper.getRestaurantByIdSize(id);
+    notifyListeners();
+  }
+
   void deleteRestaurantById(String id) async {
-    await _helper.getRestaurantById(id);
+    await _helper.deleteRestaurantById(id);
   }
 }
