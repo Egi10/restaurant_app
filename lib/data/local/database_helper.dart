@@ -61,7 +61,7 @@ class DatabaseHelper {
   Future<List<RestaurantsEntity>> getRestaurantByIdSize(String id) async {
     final Database db = await database;
     List<Map<String, dynamic>> results =
-    await db.query(_tableName, where: 'id = ?', whereArgs: [id]);
+        await db.query(_tableName, where: 'id = ?', whereArgs: [id]);
 
     return results.map((res) => RestaurantsEntity.fromMap(res)).toList();
   }
@@ -70,5 +70,6 @@ class DatabaseHelper {
     final db = await database;
 
     await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+    print('Delete Success');
   }
 }

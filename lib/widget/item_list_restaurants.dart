@@ -35,9 +35,9 @@ Widget buildRestaurantsItems(
                       "https://restaurant-api.dicoding.dev/images/medium/${restaurants.pictureId}",
                       errorBuilder: (BuildContext context, Object exception,
                           StackTrace stackTrace) {
-                        return Image(image: AssetImage('assets/image/empty.jpg'));
-                      }, loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent loadingProgress) {
+                    return Image(image: AssetImage('assets/image/empty.jpg'));
+                  }, loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Center(
                         child: Container(
