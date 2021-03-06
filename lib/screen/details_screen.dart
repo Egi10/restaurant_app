@@ -54,7 +54,7 @@ class DetailScreen extends StatelessWidget {
 
 Widget _buildRestaurantsDetail(
     BuildContext context, DetailsRestaurantsModel detailsRestaurantsModel) {
-  final provider = Provider.of<DbProvider>(context, listen: false);
+  final provider = Provider.of<DbProvider>(context);
   provider.getRestaurantByIdSize(detailsRestaurantsModel.id);
 
   return SingleChildScrollView(
@@ -114,10 +114,15 @@ Widget _buildRestaurantsDetail(
                   radius: 25,
                   backgroundColor: Colors.white,
                   child: IconButton(
-                    icon: Icon(
-                      Icons.favorite_border,
-                      color: Colors.grey,
-                    ),
+                    icon: provider.listRestaurantFavorite.length > 0
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                            color: Colors.red,
+                          ),
                     onPressed: () async {
                       final list = provider.listRestaurantFavorite;
                       if (list.length > 0) {
