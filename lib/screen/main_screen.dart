@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/local/db_provider.dart';
 import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
-import 'package:restaurant_app/screen/favorite_screen.dart';
+import 'package:restaurant_app/screen/favorite/favorite_screen.dart';
 import 'package:restaurant_app/screen/search_screen.dart';
 import 'package:restaurant_app/widget/item_list_restaurants.dart';
 import 'package:restaurant_app/widget/message_error.dart';
