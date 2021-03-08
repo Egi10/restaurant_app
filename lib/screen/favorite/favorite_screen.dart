@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/local/db_provider.dart';
 import 'package:restaurant_app/data/local/restaurants_entity.dart';
+import 'package:restaurant_app/screen/favorite/details_favorite_screen.dart';
+import 'package:restaurant_app/widget/message_error.dart';
 
 class FavoriteScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<DbProvider>(context);
+    provider.getAllRestaurant();
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -32,7 +38,11 @@ class FavoriteScreen extends StatelessWidget {
                 child: Consumer<DbProvider>(
                   builder: (context, provider, child) {
                     if (provider.resultState == ResultStateFavorite.NoData) {
-                      return Text('Kosong');
+                      return MessageError(
+                          image: "assets/image/bg_empty.svg",
+                          message: "Empty Favorite",
+                          subMessage:
+                          "There are no favorites yet");
                     } else {
                       final restaurant = provider.listRestaurant;
                       return ListView.builder(
@@ -59,45 +69,60 @@ class FavoriteScreen extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 10),
       child: Stack(
         children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Hero(
-                tag: "Favorite ${restaurantsEntity.picture}",
-                child: Image.network(
-                  "https://restaurant-api.dicoding.dev/images/medium/${restaurantsEntity.picture}",
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.width * 0.5,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Padding(padding: EdgeInsets.only(top: 10)),
-              Text(
-                restaurantsEntity.name,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-              Padding(padding: EdgeInsets.only(top: 3)),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.location_on,
-                    size: 14.0,
-                    color: Colors.grey,
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return ChangeNotifierProvider<DbProvider>(
+                    create: (_) => DbProvider(),
+                    child: DetailsFavoriteScreen(
+                      restaurantsEntity: restaurantsEntity,
+                    ),
+                  );
+                }),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Hero(
+                  tag: "Favorite ${restaurantsEntity.picture}",
+                  child: Image.network(
+                    "https://restaurant-api.dicoding.dev/images/medium/${restaurantsEntity.picture}",
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.width * 0.5,
+                    fit: BoxFit.cover,
                   ),
-                  Padding(padding: EdgeInsets.only(left: 3.0)),
-                  Text(
-                    restaurantsEntity.city,
-                    style: TextStyle(
-                      fontSize: 12,
+                ),
+                Padding(padding: EdgeInsets.only(top: 10)),
+                Text(
+                  restaurantsEntity.name,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+                Padding(padding: EdgeInsets.only(top: 3)),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.location_on,
+                      size: 14.0,
                       color: Colors.grey,
                     ),
-                  )
-                ],
-              ),
-            ],
+                    Padding(padding: EdgeInsets.only(left: 3.0)),
+                    Text(
+                      restaurantsEntity.city,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
           )
         ],
       ),

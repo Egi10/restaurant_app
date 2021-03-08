@@ -17,10 +17,10 @@ class DbProvider extends ChangeNotifier {
 
   DbProvider() {
     _helper = DatabaseHelper();
-    _getAllRestaurant();
+    // _getAllRestaurant();
   }
 
-  void _getAllRestaurant() async {
+  void getAllRestaurant() async {
     _listRestaurant = await _helper.getRestaurant();
     if (_listRestaurant.isEmpty) {
       _resultState = ResultStateFavorite.NoData;
