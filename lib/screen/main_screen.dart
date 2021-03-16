@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/local/db_provider.dart';
 import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
+import 'package:restaurant_app/provider/scheduling_provider.dart';
 import 'package:restaurant_app/screen/favorite/favorite_screen.dart';
 import 'package:restaurant_app/screen/search_screen.dart';
 import 'package:restaurant_app/screen/setting_screen.dart';
@@ -70,8 +71,8 @@ class _MainScreenState extends State<MainScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) {
-                            return ChangeNotifierProvider<RestaurantsProvider>(
-                              create: (_) => RestaurantsProvider(),
+                            return ChangeNotifierProvider<SchedulingProvider>(
+                              create: (_) => SchedulingProvider(),
                               child: SettingsScreen(),
                             );
                           }),
