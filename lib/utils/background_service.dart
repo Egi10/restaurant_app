@@ -3,6 +3,8 @@ import 'dart:isolate';
 import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/utils/notification_helper.dart';
 
+import '../main.dart';
+
 final ReceivePort port = ReceivePort();
 
 class BackgroundService {

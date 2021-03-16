@@ -5,10 +5,21 @@ import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
 import 'package:restaurant_app/screen/favorite/favorite_screen.dart';
 import 'package:restaurant_app/screen/search_screen.dart';
+import 'package:restaurant_app/screen/setting_screen.dart';
+import 'package:restaurant_app/utils/background_service.dart';
+import 'package:restaurant_app/utils/notification_helper.dart';
 import 'package:restaurant_app/widget/item_list_restaurants.dart';
 import 'package:restaurant_app/widget/message_error.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  final NotificationHelper _notificationHelper = NotificationHelper();
+  final BackgroundService _service = BackgroundService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +72,7 @@ class MainScreen extends StatelessWidget {
                           MaterialPageRoute(builder: (context) {
                             return ChangeNotifierProvider<RestaurantsProvider>(
                               create: (_) => RestaurantsProvider(),
-                              child: SearchScreen(),
+                              child: SettingsScreen(),
                             );
                           }),
                         );
@@ -102,19 +113,19 @@ class MainScreen extends StatelessWidget {
                             image: "assets/image/bg_empty.svg",
                             message: state.message,
                             subMessage:
-                                "We Cannot find the item you are searching for. maybe a little spelling mistake?");
+                            "We Cannot find the item you are searching for. maybe a little spelling mistake?");
                       } else if (state.state == ResultState.Error) {
                         return MessageError(
                             image: "assets/image/bg_server_down.svg",
                             message: state.message,
                             subMessage:
-                                "Our server goes down. We will be back soon.");
+                            "Our server goes down. We will be back soon.");
                       } else {
                         return MessageError(
                             image: "assets/image/bg_connection.svg",
                             message: state.message,
                             subMessage:
-                                "Slow or internet no connection. Please check your internet settings");
+                            "Slow or internet no connection. Please check your internet settings");
                       }
                     },
                   ),
@@ -125,5 +136,19 @@ class MainScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    port.listen((_) async => await _service.someTask());
+    _notificationHelper
+        .configureSelectNotificationSubject("detail");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    selectNotificationSubject.close();
   }
 }
