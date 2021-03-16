@@ -51,6 +51,21 @@ class MainScreen extends StatelessWidget {
                           }),
                         );
                       }),
+
+                  IconButton(
+                      icon: Icon(Icons.settings),
+                      color: Colors.grey,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return ChangeNotifierProvider<RestaurantsProvider>(
+                              create: (_) => RestaurantsProvider(),
+                              child: SearchScreen(),
+                            );
+                          }),
+                        );
+                      }),
                 ],
               ),
               Text(
