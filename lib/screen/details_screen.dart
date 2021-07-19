@@ -44,7 +44,7 @@ class _DetailScreen extends State<DetailScreen> {
                     Stack(
                       children: <Widget>[
                         Container(
-                          height: MediaQuery.of(context).size.width * 1.3,
+                          height: MediaQuery.of(context).size.width * 0.8,
                           child: Hero(
                             tag: detailsRestaurantsModel.pictureId,
                             child: ClipRRect(
@@ -68,7 +68,7 @@ class _DetailScreen extends State<DetailScreen> {
                                       width: double.infinity,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              1.2,
+                                              0.8,
                                       child: Align(
                                         alignment: Alignment.center,
                                         child: CircularProgressIndicator(),
@@ -77,7 +77,7 @@ class _DetailScreen extends State<DetailScreen> {
                                   );
                                 },
                                 width: double.infinity,
-                                height: MediaQuery.of(context).size.width * 1.2,
+                                height: MediaQuery.of(context).size.width * 0.8,
                                 fit: BoxFit.cover,
                               ),
                             ),
