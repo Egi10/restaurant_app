@@ -16,6 +16,7 @@ class MessageError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
+        child: SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,6 +45,6 @@ class MessageError extends StatelessWidget {
           )
         ],
       ),
-    );
+    ));
   }
 }
