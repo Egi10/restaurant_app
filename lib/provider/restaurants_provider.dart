@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/model/details_restaurants_model.dart';
 import 'package:restaurant_app/provider/model/restaurants_model.dart';
+import 'package:http/http.dart' as http;
 
 enum ResultState { Loading, NoData, HasData, Error, NoInternet }
 
@@ -42,7 +43,7 @@ class RestaurantsProvider extends ChangeNotifier {
       _state = ResultState.Loading;
       notifyListeners();
 
-      final listRestaurants = await apiService.listRestaurants();
+      final listRestaurants = await apiService.listRestaurants(http.Client());
       if (listRestaurants.restaurants.isEmpty) {
         _state = ResultState.NoData;
         notifyListeners();
@@ -79,7 +80,7 @@ class RestaurantsProvider extends ChangeNotifier {
       notifyListeners();
 
       final detailsRestaurant =
-          await apiService.detailRestaurants(idRestaurants);
+          await apiService.detailRestaurants(http.Client(), idRestaurants);
       _state = ResultState.HasData;
       notifyListeners();
       List<CustomerReviewsModel> listCustomerReview = [];
@@ -120,7 +121,7 @@ class RestaurantsProvider extends ChangeNotifier {
 
       ApiService apiService = ApiService();
 
-      final listRestaurants = await apiService.searchRestaurants(querySearch);
+      final listRestaurants = await apiService.searchRestaurants(http.Client(), querySearch);
       if (listRestaurants.restaurants.isEmpty) {
         _state = ResultState.NoData;
         notifyListeners();
