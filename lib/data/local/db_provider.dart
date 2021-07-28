@@ -17,10 +17,10 @@ class DbProvider extends ChangeNotifier {
 
   DbProvider() {
     _helper = DatabaseHelper();
-    _getAllRestaurant();
+    getAllRestaurant();
   }
 
-  void _getAllRestaurant() async {
+  void getAllRestaurant() async {
     _listRestaurant = await _helper.getRestaurant();
     if (_listRestaurant.isEmpty) {
       _resultState = ResultStateFavorite.NoData;
@@ -38,6 +38,10 @@ class DbProvider extends ChangeNotifier {
   Future<RestaurantsEntity> getRestaurantById(String id) async {
     return await _helper.getRestaurantById(id);
   }
+
+  // Future<List<RestaurantsEntity>> getAllRestaurant() async {
+  //   return await _helper.getRestaurant();
+  // }
 
   void getRestaurantByIdSize(String id) async {
     _listRestaurantFavorite = await _helper.getRestaurantByIdSize(id);

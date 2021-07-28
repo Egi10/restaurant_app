@@ -33,7 +33,6 @@ class _DetailScreen extends State<DetailScreen> {
               apiService: ApiService(), idRestaurants: widget.idRestaurants),
           child: Consumer<RestaurantsProvider>(builder: (context, state, _) {
             if (state.state == ResultState.Loading) {
-              print('${provider.listRestaurantFavorite.length} - $isFavorite');
               provider.getRestaurantByIdSize(widget.idRestaurants);
               return Center(
                 child: CircularProgressIndicator(),
