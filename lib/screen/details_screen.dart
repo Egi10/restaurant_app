@@ -20,8 +20,6 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreen extends State<DetailScreen> {
-  static bool isFavorite = false;
-
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DbProvider>(context);
@@ -81,8 +79,6 @@ class _DetailScreen extends State<DetailScreen> {
                                     setState(() {
                                       provider.getRestaurantByIdSize(
                                           detailsRestaurantsModel.id);
-
-                                      isFavorite = false;
                                     });
                                   } else {
                                     final restaurantsEntity = RestaurantsEntity(
@@ -102,8 +98,6 @@ class _DetailScreen extends State<DetailScreen> {
                                     setState(() {
                                       provider.getRestaurantByIdSize(
                                           detailsRestaurantsModel.id);
-
-                                      isFavorite = true;
                                     });
                                   }
                                 },
