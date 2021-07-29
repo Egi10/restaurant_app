@@ -3,13 +3,22 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/local/db_provider.dart';
 import 'package:restaurant_app/data/remote/api/api_service.dart';
 import 'package:restaurant_app/provider/restaurants_provider.dart';
+import 'package:restaurant_app/provider/scheduling_provider.dart';
 import 'package:restaurant_app/screen/favorite/favorite_screen.dart';
 import 'package:restaurant_app/screen/search_screen.dart';
 import 'package:restaurant_app/screen/setting/setting_screen.dart';
+import 'package:restaurant_app/utils/notification_helper.dart';
 import 'package:restaurant_app/widget/item_list_restaurants.dart';
 import 'package:restaurant_app/widget/message_error.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  final NotificationHelper _notificationHelper = NotificationHelper();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,9 +66,14 @@ class MainScreen extends StatelessWidget {
                       color: Colors.grey,
                       onPressed: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SettingScreen()));
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return ChangeNotifierProvider<SchedulingProvider>(
+                              create: (_) => SchedulingProvider(),
+                              child: SettingScreen(),
+                            );
+                          }),
+                        );
                       }),
                 ],
               ),
@@ -120,5 +134,16 @@ class MainScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationHelper.configureSelectNotificationSubject(context);
+  }
+  @override
+  void dispose() {
+    selectNotificationSubject.close();
+    super.dispose();
   }
 }
